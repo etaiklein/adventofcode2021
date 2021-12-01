@@ -54,27 +54,54 @@ import unittest
 
 def num_larger_than_prev(filename):
     with open(filename) as f:
+        # TODO could read line by line if memory is an issue
         input = f.readlines()
 
         previous_element = input.pop(0)
-        sum = 0
+        num_larger = 0
         for current_element in input:
             if int(current_element) > int(previous_element):
-                sum = sum + 1
+                num_larger = num_larger + 1
             previous_element = current_element
-        print("num_larger_than_prev output:", sum)
-        return sum
+        print("num_larger_than_prev output:", num_larger)
+        return num_larger
+
+
+def num_sliding_window_larger_than_prev(filename):
+    with open(filename) as f:
+        input = f.readlines()
+
+        previous_sum = int(input[0]) + int(input[1]) + int(input[2])
+        num_larger = 0
+        for index in range(len(input)):
+            if index < 2:
+                continue
+            current_sum = \
+                int(input[index]) + int(input[index-1]) + int(input[index-2])
+            if current_sum > previous_sum:
+                num_larger = num_larger + 1
+            previous_sum = current_sum
+        print("num_sliding_window_larger_than_prev output:", num_larger)
+        return num_larger
 
 
 class Test(unittest.TestCase):
 
-    def test_sample_input(self):
+    def test_part1_sample_input(self):
         output = num_larger_than_prev('day1input-sample.txt')
         self.assertEqual(output, 7)
 
-    def test_final_input(self):
+    def test_part1_final_input(self):
         output = num_larger_than_prev('day1input.txt')
         self.assertEqual(output, 1766)
+
+    def test_part2_sample_input(self):
+        output = num_sliding_window_larger_than_prev('day1input-sample.txt')
+        self.assertEqual(output, 5)
+
+    def test_part2_final_input(self):
+        output = num_sliding_window_larger_than_prev('day1input.txt')
+        self.assertEqual(output, 1797)
 
 
 if __name__ == '__main__':
