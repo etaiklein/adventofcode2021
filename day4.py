@@ -53,8 +53,16 @@ At this point, the third board wins because it has at least one complete row or 
 The score of the winning board can now be calculated. Start by finding the sum of all unmarked numbers on that board; in this case, the sum is 188. Then, multiply that sum by the number that was just called when the board won, 24, to get the final score, 188 * 24 = 4512.
 
 To guarantee victory against the giant squid, figure out which board will win first. What will your final score be if you choose that board?
-"""
 
+--- Part Two ---
+On the other hand, it might be wise to try a different strategy: let the giant squid win.
+
+You aren't sure how many bingo boards a giant squid could play at once, so rather than waste time counting its arms, the safe thing to do is to figure out which board will win last and choose that one. That way, no matter which boards it picks, it will win for sure.
+
+In the above example, the second board is the last to win, which happens after 13 is eventually called and its middle column is completely marked. If you were to keep playing until this point, the second board would have a sum of unmarked numbers equal to 148 for a final score of 148 * 13 = 1924.
+
+Figure out which board will win last. Once it wins, what would its final score be?
+"""
 
 import unittest
 
@@ -68,9 +76,23 @@ class BingoGame:
             for board in self.boards:
                 board.call_number(number)
                 if board.did_win():
-                    print(self.__str__())
                     return board.get_score()
 
+    def play_to_lose(self):
+        last_lost = None
+        for number in self.numbers_called:
+            count_lost = 0
+            for board in self.boards:
+                board.call_number(number)
+                if not board.did_win():
+                    last_lost = board
+                    count_lost += 1
+                    print("boardname", board.name)
+                elif board == last_lost:
+                    print("boardname", board.name, board.get_score(), "last_lost_score", last_lost.get_score(), "last_called", board.last_called_number)
+                    return last_lost.get_score()
+            print("count lost", count_lost)
+        return last_lost.get_score()
 
     def __str__(self):
         return f"numbers_called {self.numbers_called}, boards {[str(board) for board in self.boards]}"
@@ -104,16 +126,14 @@ class BingoBoard:
 
         for index_set in winnable_indices:
             if all([self.has_been_called[index] for index in index_set]):
-                print("winning set", index_set, [self.has_been_called[index] for index in index_set], [self.board[index] for index in index_set], self.last_called_number)
                 return True
         return False
 
     def get_score(self):
         score_board = []
-        for i in range(24):
+        for i in range(25):
             score_value_multiplier = 0 if self.has_been_called[i] else 1
             score_board.append(self.board[i] * score_value_multiplier)
-        print(f"score, {sum(score_board)} * {self.last_called_number}")
         return sum(score_board) * self.last_called_number
 
     def call_number(self, called_number):
@@ -124,21 +144,10 @@ class BingoBoard:
         except:
             pass
 
-    def p(self, index):
-        return f" {self.board[index]} " if not self.has_been_called[index] else f"*{self.board[index]}*"
-
     def __str__(self):
-        string_board = ""
-        print(f"b{self.name}{', winner' if self.did_win() else ''}")
-        for i in range(25):
-            if self.board[i] < 10:
-                string_board += " "
-            string_board += self.p(i)
-            if i % 5 == 0:
-                string_board += '\n'
-        return string_board
+        return f"{self.name}: {self.board}"
 
-def play_bingo(filename):
+def set_up_bingo(filename):
     bingo_game = BingoGame()
     with open(filename) as f:
         line =  f.readline()
@@ -158,8 +167,13 @@ def play_bingo(filename):
                 for i in line.split():
                     current_board.board[board_index] = int(i)
                     board_index = board_index + 1
+    return bingo_game
 
-        return bingo_game.start()
+def play_bingo(filename):
+    return set_up_bingo(filename).start()
+
+def play_bingo_to_lose(filename):
+   return set_up_bingo(filename).play_to_lose()
 
 class Test(unittest.TestCase):
     def test_part1_sample_input(self):
@@ -168,16 +182,15 @@ class Test(unittest.TestCase):
 
     def test_part1_final_input(self):
         output = play_bingo('day4input.txt')
-        self.assertEqual(output, 1)
-    """
-        def test_part2_sample_input(self):
-            output = get_02_and_c02_rates('day3input-sample.txt')
-            self.assertEqual(output, 230)
+        self.assertEqual(output, 8580)
 
-        def test_part2_final_input(self):
-            output = get_02_and_c02_rates('day3input.txt')
-            self.assertEqual(output, 6085575)
-    """
+    def test_part2_sample_input(self):
+        output = play_bingo_to_lose('day4input-sample.txt')
+        self.assertEqual(output, 1924)
+
+    def test_part2_final_input(self):
+        output = play_bingo_to_lose('day4input.txt')
+        self.assertEqual(output, 9576)
 
 if __name__ == '__main__':
     unittest.main()
