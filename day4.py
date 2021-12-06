@@ -86,17 +86,17 @@ class BingoBoard:
         # column, row, or diagonal are all called
         winnable_indices = [
             # horizontal rows
-            [0,1,2,3,4],
-            [5,6,7,8,9],
-            [10,11,12,13,14],
-            [15,16,17,18,19],
-            [20,21,22,23,24],
+            [0, 1, 2, 3, 4],
+            [5, 6, 7, 8, 9],
+            [10, 11, 12, 13, 14],
+            [15, 16, 17, 18, 19],
+            [20, 21, 22, 23, 24],
             # vertical columns
-            [0,5,10,15,20],
-            [1,6,11,16,21],
-            [2,7,12,17,22],
-            [3,8,13,18,23],
-            [4,9,14,19,24],
+            [0, 5, 10, 15, 20],
+            [1, 6, 11, 16, 21],
+            [2, 7, 12, 17, 22],
+            [3, 8, 13, 18, 23],
+            [4, 9, 14, 19, 24],
             # diagonal rows
             # [0,6,12,18,24] diagonals dont count
             # [20,16,12,8,4] diagonals dont count
@@ -106,8 +106,7 @@ class BingoBoard:
             if all([self.has_been_called[index] for index in index_set]):
                 print("winning set", index_set, [self.has_been_called[index] for index in index_set], [self.board[index] for index in index_set], self.last_called_number)
                 return True
-            else:
-                return False
+        return False
 
     def get_score(self):
         score_board = []
@@ -136,8 +135,7 @@ class BingoBoard:
                 string_board += " "
             string_board += self.p(i)
             if i % 5 == 0:
-                string_board += "\
-"
+                string_board += '\n'
         return string_board
 
 def play_bingo(filename):
@@ -171,15 +169,15 @@ class Test(unittest.TestCase):
     def test_part1_final_input(self):
         output = play_bingo('day4input.txt')
         self.assertEqual(output, 1)
-"""
-    def test_part2_sample_input(self):
-        output = get_02_and_c02_rates('day3input-sample.txt')
-        self.assertEqual(output, 230)
+    """
+        def test_part2_sample_input(self):
+            output = get_02_and_c02_rates('day3input-sample.txt')
+            self.assertEqual(output, 230)
 
-    def test_part2_final_input(self):
-        output = get_02_and_c02_rates('day3input.txt')
-        self.assertEqual(output, 6085575)
-"""
+        def test_part2_final_input(self):
+            output = get_02_and_c02_rates('day3input.txt')
+            self.assertEqual(output, 6085575)
+    """
 
 if __name__ == '__main__':
     unittest.main()
