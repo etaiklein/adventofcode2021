@@ -47,85 +47,38 @@ Each day, a 0 becomes a 6 and adds a new 8 to the end of the list, while each ot
 In this example, after 18 days, there are a total of 26 fish. After 80 days, there would be a total of 5934.
 
 Find a way to simulate lanternfish. How many lanternfish would there be after 80 days?
+--- Part Two ---
+Suppose the lanternfish live forever and have unlimited food and space. Would they take over the entire ocean?
 
+After 256 days in the example above, there would be a total of 26984457539 lanternfish!
+
+How many lanternfish would there be after 256 days?
 """
 
 import unittest
 
 
-class Lanternfish:
-    def __init__(self, timer=8):
-        self.timer = timer
-
-    def set_timer(self, val=6):
-        self.timer = val
-
-    def tick(self, new_fish):
-        self.timer = self.timer - 1
-        if self.timer == -1:
-            self.timer = 6
-            new_fish.append(Lanternfish())
-
-    def __str__(self):
-        return str(self.timer)
-
-class LanternfishSchool:
-    def __init__(self, timer=8):
-        self.timer = timer
-        self.number_of_fish = 0
-
-    def set_fish(self, num):
-        self.number_of_fish = num
-
-    def set_timer(self, val=6):
-        self.timer = val
-
-    def __str__(self):
-        return str(self.timer)
-
-
 def count_fish(filename, days):
-    all_fish = []
+    all_schools = [0] * 9
     with open(filename) as f:
         timers = f.readline()
         for timer in timers.split(","):
-            all_fish.append(Lanternfish(int(timer)))
+            all_schools[int(timer)] += 1
 
-    for day in range(days):
-        new_fish = []
-        for fish in all_fish:
-            fish.tick(new_fish)
-        all_fish = all_fish + new_fish
-        print(len(all_fish))
-    return len(all_fish)
-
-def count_MANY_fish(filename, days):
-    fish0 = LanternfishSchool(0)
-    fish1 = LanternfishSchool(1)
-    fish2 = LanternfishSchool(2)
-    fish3 = LanternfishSchool(3)
-    fish4 = LanternfishSchool(4)
-    fish5 = LanternfishSchool(5)
-    fish6 = LanternfishSchool(6)
-    fish7 = LanternfishSchool(7)
-    fish8 = LanternfishSchool(8)
-    all_schools = [
-        fish0, fish1, fish2, fish3, fish4, fish5, fish6, fish7, fish8
-    ]
-    with open(filename) as f:
-        timers = f.readline()
-        for timer in timers.split(","):
-            all_schools[int(timer)].set_fish(all_schools[int(timer)] + 1)
-
-    for day in range(days):
-        new_fish = []
-        temp = None
-        for i in range(9):
-            all_fish
-            fish.tick(all_schools, new_fish)
-        all_fish = all_fish + new_fish
-        print(len(all_fish))
-    return len(all_fish)
+    for day in range(days + 1):
+        if day == 0:
+            continue
+        preggers = all_schools[0]
+        all_schools[0] = all_schools[1]
+        all_schools[1] = all_schools[2]
+        all_schools[2] = all_schools[3]
+        all_schools[3] = all_schools[4]
+        all_schools[4] = all_schools[5]
+        all_schools[5] = all_schools[6]
+        all_schools[6] = all_schools[7] + preggers
+        all_schools[7] = all_schools[8]
+        all_schools[8] = preggers
+    return sum(all_schools)
 
 class Test(unittest.TestCase):
     def test_part1_sample_input(self):
@@ -136,13 +89,13 @@ class Test(unittest.TestCase):
         output = count_fish('day6input.txt', 80)
         self.assertEqual(output, 374994)
 
-    # def test_part2_sample_input(self):
-    #     output = count_fish('day6input-sample.txt', 256)
-    #     self.assertEqual(output, 26984457539)
+    def test_part2_sample_input(self):
+        output = count_fish('day6input-sample.txt', 256)
+        self.assertEqual(output, 26984457539)
 
-    # def test_part2_final_input(self):
-    #     output = count_fish('day6input.txt', 256)
-    #     self.assertEqual(output, 21104)
+    def test_part2_final_input(self):
+        output = count_fish('day6input.txt', 256)
+        self.assertEqual(output, 1686252324092)
 
 if __name__ == '__main__':
     unittest.main()
